@@ -14,5 +14,8 @@ mkdirSync(pub, { recursive: true });
 cpSync(join(root, "index.html"), join(pub, "index.html"));
 cpSync(join(root, "js"), join(pub, "js"), { recursive: true });
 cpSync(join(root, "data"), join(pub, "data"), { recursive: true });
+if (existsSync(join(root, "assets"))) {
+  cpSync(join(root, "assets"), join(pub, "assets"), { recursive: true });
+}
 
-console.log("vercel-build: copied index.html, js/, data/ -> public/");
+console.log("vercel-build: copied index.html, js/, data/ (+ assets/) -> public/");
