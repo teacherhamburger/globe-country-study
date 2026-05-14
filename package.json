@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node -e \"console.log('static: no compile')\"",
+    "build": "node scripts/vercel-build.mjs",
     "build:tw": "node scripts/build-zh-tw.mjs",
     "grid-estimate": "node scripts/grid-estimate.mjs",
     "selftest:sphere-fill": "node scripts/sphere-fill-subdiv-selftest.mjs",

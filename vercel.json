@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "public",
   "headers": [
     {
       "source": "/data/ne_50m_admin_0_countries.geojson",
