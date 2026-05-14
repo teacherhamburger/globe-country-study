@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>地球國家練習（答案模式）</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background: #02040a;
+      color: #e8eef5;
+    }
+    #canvas-wrap {
+      position: fixed;
+      inset: 0;
+    }
+    #ui {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      max-width: 420px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    #ui > * { pointer-events: auto; }
+    .panel {
+      background: rgba(8, 14, 28, 0.82);
+      border: 1px solid rgba(120, 160, 220, 0.25);
+      border-radius: 10px;
+      padding: 12px 14px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+    .panel p {
+      margin: 0;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: #a8b8cc;
+    }
+    button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(100, 180, 255, 0.4);
+      background: linear-gradient(180deg, rgba(40, 90, 160, 0.5), rgba(20, 50, 100, 0.6));
+      color: #e8eef5;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    button:hover {
+      border-color: rgba(140, 200, 255, 0.65);
+    }
+    .country-label {
+      text-align: center;
+      line-height: 1.25;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0, 12, 32, 0.75);
+      border: 1px solid rgba(160, 200, 255, 0.35);
+      color: #f0f6ff;
+      font-size: 11px;
+      white-space: nowrap;
+      user-select: none;
+      text-shadow: 0 1px 2px #000;
+    }
+    .country-label .zh {
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .country-label .cap {
+      font-size: 10px;
+      color: #b8cce8;
+      margin-top: 1px;
+    }
+    .country-label.dim {
+      opacity: 0.35;
+    }
+    .country-label.highlight {
+      border-color: #48d6b0;
+      background: rgba(8, 42, 36, 0.9);
+      box-shadow: 0 0 12px rgba(72, 214, 176, 0.5);
+    }
+    .country-label.revealed-wrong {
+      border-color: #ff8888;
+      background: rgba(80, 12, 12, 0.88);
+      box-shadow: 0 0 10px rgba(255, 90, 90, 0.4);
+    }
+    #quiz-panel h2 {
+      margin: 0 0 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .quiz-question-card {
+      margin: 10px 0 8px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(120, 180, 255, 0.28);
+      background: linear-gradient(
+        180deg,
+        rgba(18, 36, 68, 0.92),
+        rgba(10, 22, 44, 0.88)
+      );
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 10px 28px rgba(0, 0, 0, 0.28);
+    }
+    .quiz-question-card.is-active {
+      border-color: rgba(120, 210, 255, 0.55);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(90, 180, 255, 0.12),
+        0 12px 32px rgba(0, 0, 0, 0.34);
+    }
+    .quiz-question-label {
+      margin: 0 0 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8ec8ff;
+    }
+    .quiz-question-card.is-idle .quiz-question-label {
+      color: #8fa4bc;
+      letter-spacing: 0.08em;
+    }
+    #quiz-question {
+      margin: 0;
+      min-height: 1.5em;
+      line-height: 1.35;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #c8d8ea;
+    }
+    .quiz-question-card.is-active #quiz-question {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 1.42rem;
+      font-weight: 800;
+      color: #f7fbff;
+      text-shadow: 0 1px 12px rgba(80, 170, 255, 0.22);
+    }
+    #quiz-question .quiz-country-zh {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #fff4d6;
+    }
+    #quiz-question .quiz-country-en {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #b8dcff;
+    }
+    #quiz-stats {
+      font-size: 0.78rem;
+      color: #9eb4cc;
+      line-height: 1.5;
+    }
+    #quiz-feedback {
+      font-size: 0.8rem;
+      margin-top: 8px;
+      min-height: 1.2em;
+      color: #a8d8a8;
+    }
+    #quiz-feedback.err { color: #ffaaaa; }
+    #quiz-feedback.ok { color: #8effa8; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .btn-row.continents { margin-top: 8px; }
+    .btn-row.continents button {
+      padding: 6px 10px;
+      font-size: 0.76rem;
+    }
+    button.btn-secondary {
+      border-color: rgba(160, 160, 180, 0.45);
+      background: rgba(30, 35, 50, 0.75);
+    }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+      "earcut": "https://esm.sh/earcut@2.2.4"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="canvas-wrap"></div>
+  <div id="ui">
+    <div class="panel" id="quiz-panel">
+      <h2>點選測驗</h2>
+      <p>按「開始測驗」後依題目點地圖；題庫為聯合國會員國與觀察員國（193＋2）外加台灣為送分題（第 196 題，抽到即自動綠色答對）。其餘題答對塗綠、答錯塗紅，揭曉時轉向該國並顯示標籤，直到全部出完。</p>
+      <div class="btn-row continents" id="continent-shortcuts">
+        <button type="button" class="btn-secondary btn-continent" data-lat="34" data-lon="105">亞洲</button>
+        <button type="button" class="btn-secondary btn-continent" data-lat="54" data-lon="15">歐洲</button>
+        <button type="button" class="btn-secondary btn-continent" data-lat="5" data-lon="20">非洲</button>
+        <button type="button" class="btn-secondary btn-continent" data-lat="50" data-lon="-100">北美</button>
+        <button type="button" class="btn-secondary btn-continent" data-lat="-15" data-lon="-60">南美</button>
+        <button type="button" class="btn-secondary btn-continent" data-lat="-22" data-lon="140">大洋洲</button>
+      </div>
+      <div id="quiz-question-card" class="quiz-question-card is-idle">
+        <p class="quiz-question-label">題目</p>
+        <div id="quiz-question">尚未開始</div>
+      </div>
+      <div id="quiz-stats">—</div>
+      <div id="quiz-feedback"></div>
+      <div class="btn-row">
+        <button type="button" id="btn-quiz-start">開始測驗</button>
+        <button type="button" id="btn-quiz-stop" class="btn-secondary">結束測驗</button>
+        <button type="button" id="btn-quiz-reset" class="btn-secondary">重置進度</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
