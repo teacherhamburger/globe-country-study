@@ -2,7 +2,10 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1"
+  />
   <title>地球國家練習（答案模式）</title>
   <style>
     * { box-sizing: border-box; }
@@ -224,6 +227,104 @@
       line-height: 1.35;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
     }
+    .quiz-intro-mobile {
+      display: none;
+    }
+    .quiz-intro-mobile summary {
+      cursor: pointer;
+      font-size: 0.72rem;
+      color: #8eb4dc;
+      list-style: none;
+    }
+    .quiz-intro-mobile summary::-webkit-details-marker {
+      display: none;
+    }
+    .quiz-intro-mobile summary::after {
+      content: " ▾";
+      font-size: 0.65em;
+      opacity: 0.8;
+    }
+    .quiz-intro-mobile[open] summary::after {
+      content: " ▴";
+    }
+    .quiz-intro-mobile p {
+      margin: 8px 0 0;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: #a8b8cc;
+    }
+    @media (max-width: 640px), (max-height: 480px) and (max-width: 900px) {
+      #ui {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: none;
+        max-height: min(42vh, 280px);
+        padding: 0 0 max(8px, env(safe-area-inset-bottom));
+        gap: 0;
+        overflow: hidden;
+        justify-content: flex-end;
+      }
+      #quiz-panel.panel {
+        border-radius: 14px 14px 0 0;
+        padding: 10px 12px 12px;
+        max-height: min(42vh, 280px);
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        border-bottom: none;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+      }
+      #quiz-panel h2 {
+        margin: 0 0 6px;
+        font-size: 0.82rem;
+      }
+      .quiz-intro-desktop {
+        display: none;
+      }
+      .quiz-intro-mobile {
+        display: block;
+        margin: 0 0 6px;
+      }
+      .quiz-question-card {
+        margin: 6px 0;
+        padding: 10px 12px;
+      }
+      .quiz-question-card.is-active #quiz-question {
+        font-size: 1.12rem;
+      }
+      #quiz-question .quiz-country-zh {
+        font-size: 1.22rem;
+      }
+      #quiz-question .quiz-country-en {
+        font-size: 0.82rem;
+      }
+      .btn-row.continents button {
+        padding: 5px 8px;
+        font-size: 0.7rem;
+      }
+      button {
+        padding: 7px 10px;
+        font-size: 0.76rem;
+      }
+      #quiz-stats {
+        font-size: 0.72rem;
+      }
+      .brand-watermark {
+        right: max(8px, env(safe-area-inset-right));
+        bottom: calc(min(42vh, 280px) + max(10px, env(safe-area-inset-bottom)));
+        max-width: 96px;
+        padding: 5px 6px 6px;
+        opacity: 0.65;
+      }
+      .brand-watermark img {
+        width: 44px;
+      }
+      .brand-watermark__text {
+        font-size: 0.55rem;
+      }
+    }
   </style>
   <script type="importmap">
   {
@@ -240,7 +341,17 @@
   <div id="ui">
     <div class="panel" id="quiz-panel">
       <h2>點選測驗</h2>
-      <p>按「開始測驗」後依題目點地圖；題庫為聯合國會員國與觀察員國（193＋2）外加台灣為送分題（第 196 題，抽到即自動綠色答對）。其餘題答對塗綠、答錯塗紅，揭曉時轉向該國並顯示標籤，直到全部出完。</p>
+      <details class="quiz-intro-mobile">
+        <summary>測驗說明（點開）</summary>
+        <p>
+          按「開始測驗」後依題目點地圖；題庫為聯合國會員國與觀察員國（193＋2）外加台灣為送分題（第
+          196 題，抽到即自動綠色答對）。其餘題答對塗綠、答錯塗紅，揭曉時轉向該國並顯示標籤，直到全部出完。
+        </p>
+      </details>
+      <p class="quiz-intro-desktop">
+        按「開始測驗」後依題目點地圖；題庫為聯合國會員國與觀察員國（193＋2）外加台灣為送分題（第
+        196 題，抽到即自動綠色答對）。其餘題答對塗綠、答錯塗紅，揭曉時轉向該國並顯示標籤，直到全部出完。
+      </p>
       <div class="btn-row continents" id="continent-shortcuts">
         <button type="button" class="btn-secondary btn-continent" data-lat="34" data-lon="105">亞洲</button>
         <button type="button" class="btn-secondary btn-continent" data-lat="54" data-lon="15">歐洲</button>

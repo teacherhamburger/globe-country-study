@@ -147,6 +147,7 @@ renderer.setPixelRatio(rendererPixelRatio());
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x02040a, 1);
 renderer.dithering = true;
+renderer.domElement.style.touchAction = "none";
 wrap.appendChild(renderer.domElement);
 
 const labelRenderer = new CSS2DRenderer();
@@ -1377,13 +1378,16 @@ document.getElementById("btn-quiz-start")?.addEventListener("click", startQuiz);
 document.getElementById("btn-quiz-stop")?.addEventListener("click", stopQuiz);
 document.getElementById("btn-quiz-reset")?.addEventListener("click", resetQuiz);
 
-window.addEventListener("resize", () => {
+function applyRendererSize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setPixelRatio(rendererPixelRatio());
   renderer.setSize(window.innerWidth, window.innerHeight);
   labelRenderer.setSize(window.innerWidth, window.innerHeight);
-});
+}
+
+window.addEventListener("resize", applyRendererSize);
+window.visualViewport?.addEventListener("resize", applyRendererSize);
 
 const _labelWorld = new THREE.Vector3();
 const _camDir = new THREE.Vector3();
